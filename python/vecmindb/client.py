@@ -89,6 +89,8 @@ class VecminClient:
         api_key: Optional[str] = None,
         jwt_token: Optional[str] = None,
         admin_password: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        sovereignty_token: Optional[str] = None,
         connect_timeout: float = 5.0,
         read_timeout: float = 30.0,
         write_timeout: float = 30.0,
@@ -99,6 +101,8 @@ class VecminClient:
         self._base_url = base_url.rstrip("/")
         self._api_url = f"{self._base_url}/api/v1"
         self._retry_config = retry_config or RetryConfig()
+        self.agent_id = agent_id or "default_agent"
+        self.sovereignty_token = sovereignty_token or "system"
         self._auth = AuthManager(
             api_key=api_key,
             jwt_token=jwt_token,
@@ -142,13 +146,16 @@ class VecminClient:
 
     def _build_headers(
         self,
+        *,
         agent_id: Optional[str] = None,
         model_id: Optional[str] = None,
         request_id: Optional[str] = None,
     ) -> Dict[str, str]:
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        effective_agent_id = agent_id or self.agent_id
+        effective_model_id = model_id or self.sovereignty_token
         headers.update(self._auth.auth_headers())
-        headers.update(self._auth.extra_headers(agent_id=agent_id, model_id=model_id, request_id=request_id))
+        headers.update(self._auth.extra_headers(agent_id=effective_agent_id, model_id=effective_model_id, request_id=request_id))
         return headers
 
     def _request(
@@ -601,21 +608,32 @@ class VecminClient:
         self,
         content: str,
         *,
-        agent_id: str = "default",
+        agent_id: Optional[str] = None,
+        sovereignty_token: Optional[str] = None,
+        model_id: Optional[str] = None,
         source: str = "sdk",
         **kw,
     ) -> str:
         """Store a memory via the MCP ``store_memory`` tool."""
+        effective_agent_id = agent_id or self.agent_id
+        effective_token = sovereignty_token or self.sovereignty_token
+        effective_model_id = model_id or effective_token
         payload = {
             "jsonrpc": "2.0",
             "method": "tools/call",
             "params": {
                 "name": "store_memory",
-                "arguments": {"agent_id": agent_id, "text": content, "source": source},
+                "arguments": {
+                    "agent_id": effective_agent_id,
+                    "text": content,
+                    "source": source,
+                    "sovereignty_token": effective_token,
+                    "model_id": effective_model_id,
+                },
             },
             "id": 1,
         }
-        data = self._api_post("/mcp/message", payload, **kw)
+        data = self._api_post("/mcp/message", payload, agent_id=effective_agent_id, model_id=effective_model_id, **kw)
         result = data.get("data", data)
         if isinstance(result, dict):
             return result.get("content", result.get("result", str(result)))
@@ -625,25 +643,68 @@ class VecminClient:
         self,
         query: str,
         *,
-        agent_id: str = "default",
+        agent_id: Optional[str] = None,
+        sovereignty_token: Optional[str] = None,
+        model_id: Optional[str] = None,
         top_k: int = 5,
         **kw,
     ) -> str:
         """Search memories via the MCP ``search_memory`` tool."""
+        effective_agent_id = agent_id or self.agent_id
+        effective_token = sovereignty_token or self.sovereignty_token
+        effective_model_id = model_id or effective_token
         payload = {
             "jsonrpc": "2.0",
             "method": "tools/call",
             "params": {
                 "name": "search_memory",
-                "arguments": {"agent_id": agent_id, "query": query, "top_k": top_k},
+                "arguments": {
+                    "agent_id": effective_agent_id,
+                    "query": query,
+                    "top_k": top_k,
+                    "sovereignty_token": effective_token,
+                    "model_id": effective_model_id,
+                },
             },
             "id": 2,
         }
-        data = self._api_post("/mcp/message", payload, **kw)
+        data = self._api_post("/mcp/message", payload, agent_id=effective_agent_id, model_id=effective_model_id, **kw)
         result = data.get("data", data)
         if isinstance(result, dict):
             return result.get("content", result.get("result", str(result)))
         return str(result)
+
+    def mount_memory(
+        self,
+        domain: Optional[str] = None,
+        *,
+        name: Optional[str] = None,
+        sovereignty_token: Optional[str] = None,
+        mode: str = "evolutionary",
+        model_id: Optional[str] = None,
+    ) -> "VecminMemorySpace":
+        """Mount a cognitive memory space for agent operation.
+
+        Args:
+            domain: Alias for name/collection identifier.
+            name: Unified cognitive space identifier.
+            sovereignty_token: Sovereign domain access token.
+            mode: Operating mode (e.g., 'evolutionary').
+            model_id: Embedding feature extraction model targeting.
+
+        Returns:
+            VecminMemorySpace instance.
+        """
+        from .memory import AgentMemoryManager
+        resolved_name = domain or name or "default"
+        resolved_token = sovereignty_token or self.sovereignty_token
+        manager = AgentMemoryManager(
+            client=self,
+            agent_id=self.agent_id,
+            sovereignty_token=resolved_token,
+            model_id=model_id,
+        )
+        return manager.mount_memory(domain=resolved_name, mode=mode)
 
     # ==================================================================
     # Convenience: ensure_collection (backward compat)

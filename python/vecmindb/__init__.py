@@ -66,8 +66,38 @@ from .models import (
 from .auth import AuthManager
 from .retry import RetryConfig
 from .memory_plugin import VecminDBMemoryPlugin
+from .memory import (
+    AgentMemoryManager,
+    AsyncAgentMemoryManager,
+    VecminMemorySpace,
+    AsyncVecminMemorySpace,
+)
+from typing import Optional
 
 __version__ = "1.0.0"
+
+
+def connect(
+    base_url: str = "http://localhost:5520",
+    *,
+    api_key: Optional[str] = None,
+    jwt_token: Optional[str] = None,
+    admin_password: Optional[str] = None,
+    agent_id: Optional[str] = None,
+    sovereignty_token: Optional[str] = None,
+    **kwargs,
+) -> VecminClient:
+    """Convenience function to connect to VecminDB and return a sync client."""
+    return VecminClient(
+        base_url=base_url,
+        api_key=api_key,
+        jwt_token=jwt_token,
+        admin_password=admin_password,
+        agent_id=agent_id,
+        sovereignty_token=sovereignty_token,
+        **kwargs,
+    )
+
 
 __all__ = [
     # Clients
@@ -75,6 +105,7 @@ __all__ = [
     "AsyncVecminClient",
     "McpClient",
     "SyncMcpClient",
+    "connect",
     # Exceptions
     "VecminError",
     "AuthenticationError",
@@ -122,4 +153,9 @@ __all__ = [
     "RetryConfig",
     # Memory Plugin
     "VecminDBMemoryPlugin",
+    # Agent OS Memory Managers
+    "AgentMemoryManager",
+    "AsyncAgentMemoryManager",
+    "VecminMemorySpace",
+    "AsyncVecminMemorySpace",
 ]
