@@ -1,6 +1,6 @@
 # VecminDB SDK
 
-The official SDK for [VecminDB](https://github.com/vecmindb) — The Sovereign Memory OS for AI Agents.
+The official SDK for [VecminDB](https://vecmindb.com) — The Sovereign Memory OS for AI Agents.
 
 > Stop letting your AI Agents hallucinate from memory rot. VecminDB naturally decays outdated memories, distills knowledge via PCA, and provides 100% Air-Gapped cryptographic data sovereignty.
 
@@ -12,13 +12,17 @@ VecminDB can be run via Docker or as optimized, standalone pre-compiled native b
 The fastest way to spin up VecminDB with automatic in-database bilingual embedding support.
 
 ```bash
-docker run -d --name vecmindb-trial -p 5520:5520 ghcr.io/slqyahoo123/vecmindb:1.0.0-beta
+# For Global / Overseas users:
+docker run -d --name vecmindb-trial -p 5520:5520 ghcr.io/lingxinmind/vecmindb:latest
+
+# For Domestic users (China Aliyun Mirror):
+# docker run -d --name vecmindb-trial -p 5520:5520 crpi-ngtfnt7d3tsnwk7l.cn-shanghai.personal.cr.aliyuncs.com/vecmindb/vecmindb:latest
 ```
 
 ---
 
 ### Method B: Pre-Compiled Native Binary Bundles (Zero-Docker / Zero-Python)
-Ideal for high-performance, air-gapped private cloud servers. Download the appropriate package from our [Releases](https://github.com/slqyahoo123/vecmindb-sdk/releases) page:
+Ideal for high-performance, air-gapped private cloud servers. Download the appropriate package from our official [Downloads](https://vecmindb.com/downloads) portal:
 
 *   **Windows (AMD64)**:
     Download `vecmindb-1.0.0-beta-x86_64-pc-windows-msvc.zip`. Extract the ZIP archive, open Command Prompt or PowerShell in the directory, and run:
@@ -99,4 +103,4 @@ agent = Agent(
 *   **Sovereignty Isolation**: Agents are cryptographically isolated using HMAC-SHA256 signature chains.
 
 ---
-**Enterprise Licensing**: For multi-node SOC-2 compliant deployments, contact `sulingqi@hotmail.com`.
+**Enterprise Licensing**: For multi-node SOC-2 compliant deployments, contact `support@vecmindb.com`.

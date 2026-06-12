@@ -1,6 +1,6 @@
 # @vecmindb/sdk
 
-Official TypeScript SDK for [VecminDB](https://github.com/vecmindb/vecmindb) — the high-performance vector database for AI agents.
+Official TypeScript SDK for [VecminDB](https://vecmindb.com) — the high-performance vector database for AI agents.
 
 ## Installation
 

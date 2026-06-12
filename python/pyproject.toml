@@ -10,9 +10,9 @@ authors = [{email = "dev@vecmindb.com", name = "VecminDB Team"}]
 license = {text = "MIT OR Apache-2.0"}
 readme = "../../README.md"
 requires-python = ">=3.8"
-homepage = "https://vecmindb.io"
-repository = "https://github.com/vecmindb/vecmindb"
-documentation = "https://docs.rs/vecmindb"
+homepage = "https://vecmindb.com"
+repository = "https://github.com/lingxinmind/vecminDB"
+documentation = "https://vecmindb.com/docs"
 keywords = ["vector-database", "similarity-search", "embedding", "sdk", "rag"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -40,10 +40,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://vecmindb.io"
-Repository = "https://github.com/vecmindb/vecmindb"
-Documentation = "https://docs.rs/vecmindb"
-Changelog = "https://github.com/vecmindb/vecmindb/blob/main/CHANGELOG.md"
+Homepage = "https://vecmindb.com"
+Repository = "https://github.com/lingxinmind/vecminDB"
+Documentation = "https://vecmindb.com/docs"
+Changelog = "https://vecmindb.com/changelog"
 
 [tool.setuptools.packages.find]
 include = ["vecmindb*"]
